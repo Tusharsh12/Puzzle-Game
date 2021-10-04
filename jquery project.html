@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+  <meta charset="UTF-8">
+  
+<link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+<meta name="apple-mobile-web-app-title" content="CodePen">
+
+<link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+
+<link rel="mask-icon" type="" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
+
+
+  <title>puzzle game</title>
+  
+  
+  
+  
+<style>
+body {
+  background: #111111;
+}
+
+#div1{
+
+          width: 1585px;
+          height: 2000px;
+          
+          float: left;
+          border-radius: 5%;
+        
+
+
+         }
+
+         #img1 {
+
+          border-radius: 5%;
+          width: 1585px;
+          height: 400px;
+            
+         }
+
+         #img2 {
+
+         
+          
+           float: left;
+           width: -200px;
+           height: 400px;
+           position: absolute;
+           margin-right: 700px;
+           margin-top: -350px;
+           
+         
+         }
+
+         #img3 {
+
+         
+          
+           float: left;
+           width: 200px;
+           height: 400px;
+           position: absolute;
+           margin-right: 700px;
+           margin-top: -400px;
+           margin-left: 1380px;
+           border-radius: 20%;
+           
+         
+         }
+
+#puzzle {
+  width: 810px;
+  padding: 2px;
+  margin: auto;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background-color: #ffcb9a;
+}
+#puzzle figure {
+  width: 510px;
+  height: 555px;
+  border: 1px solid #aaa;
+  position: relative;
+  float: left;
+  background-color: #ffffff;
+}
+
+#ui {
+  width: 200px;
+  padding: 3px 0 0 5px;
+  float: left;
+}
+#ui button {
+  margin-bottom: 2em;
+}
+#ui p {
+  font-size: 1.7em;
+}
+
+#start {
+  width: 200px;
+  height: 50px;
+  font-size: 1.75em;
+}
+
+img {
+  width: inherit;
+}
+
+.clearfix {
+  zoom: 1;
+}
+.clearfix:before {
+  content: " ";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.clearfix:after {
+  content: " ";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+
+h2 {
+  color: #2c3531;
+  text-align: center;
+  font-family: "Pacifico", Regular;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no" >
+  <!DOCTYPE html>
+<html></html>
+<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet'>
+<body></body>
+
+           <img id="img1" src="name.png">
+     <div id="img2" style="text-align: left"><img src="shinchan2.png"/></div>
+     <div id="img3" style="text-align: right"><img src="shinchan3.png"/></div>
+     <div id="puzzle1">hi there</div>
+
+
+    
+<h1>Puzzle Game</h1>
+<h2>Please click on start button.The time counter will start.It will stop when the puzzle is complete.If your unable to complete this puzzle restart.Have Fun Playing & Enjoy!!!</h2>
+<div class='clearfix' id='puzzle'>
+  <figure>
+    <img src='main.png'>
+  </figure>
+  <div id='ui'>
+    <p id='time'>
+      Current time:
+      <span>00:00:00</span>
+    </p>
+    <button id='start'>Start!</button>
+  </div>
+</div>
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+      <script id="rendered-js" >
+$(function () {
+  //variables
+  var numberOfPieces = 12,
+  aspect = "3:4",
+  aspectW = parseInt(aspect.split(":")[0]),
+  aspectH = parseInt(aspect.split(":")[1]),
+  container = $("#puzzle"),
+  imgContainer = container.find("figure"),
+  img = imgContainer.find("img"),
+  path = img.attr("src"),
+  piece = $("<div/>"),
+  pieceW = Math.floor(img.width() / aspectW),
+  pieceH = Math.floor(img.height() / aspectH),
+  idCounter = 0,
+  positions = [],
+  empty = {
+    top: 0,
+    left: 0,
+    bottom: pieceH,
+    right: pieceW },
+
+  previous = {},
+  timer,
+  currentTime = {},
+  timerDisplay = container.find("#time").find("span");
+
+  //generate puzzle pieces
+  for (var x = 0, y = aspectH; x < y; x++) {
+    for (var a = 0, b = aspectW; a < b; a++) {
+      var top = pieceH * x,
+      left = pieceW * a;
+
+      piece.clone().attr("id", idCounter++).css({
+        width: pieceW,
+        height: pieceH,
+        position: "absolute",
+        top: top,
+        left: left,
+        backgroundImage: ["url(", path, ")"].join(""),
+        backgroundPosition: ["-", pieceW * a, "px ", "-", pieceH * x, "px"].join("") }).
+      appendTo(imgContainer);
+
+      //store positions
+      positions.push({ top: top, left: left });
+    }
+  }
+
+  //remove original image
+  img.remove();
+
+  //remove first piece from board
+  container.find("#0").remove();
+
+  //remove first item in positions array
+  positions.shift();
+
+  $("#start").on("click", function (e) {
+
+    //shuffle the pieces randomly
+    var pieces = imgContainer.children();
+
+    function shuffle(array) {
+      var i = array.length;
+      if (i === 0) {
+        return false;
+      }
+      while (--i) {
+        var j = Math.floor(Math.random() * (i + 1)),
+        tempi = array[i],
+        tempj = array[j];
+
+        array[i] = tempj;
+        array[j] = tempi;
+      }
+    }
+
+    shuffle(pieces);
+
+    //set position of shuffled images
+    $.each(pieces, function (i) {
+      pieces.eq(i).css(positions[i]);
+    });
+
+    //replace existing pieces with shuffled pieces
+    pieces.appendTo(imgContainer);
+
+    //make sure empty slot is at position 0 when timer starts
+    empty.top = 0;
+    empty.left = 0;
+
+    //remove any previous messages
+    container.find("#ui").find("p").not("#time").remove();
+
+    //cancel previous timer
+    if (timer) {
+      clearInterval(timer);
+      timerDisplay.text("00:00:00");
+    }
+
+    //start the timer!
+    timer = setInterval(updatetime, 1000);
+    currentTime.seconds = 0;
+    currentTime.minutes = 0;
+    currentTime.hours = 0;
+
+    //update the timer display
+    function updatetime() {
+
+      //stop timer if 24 hours
+      if (currentTime.hours === 23 && currentTime.minutes === 59 && currentTime.seconds === 59) {
+        clearinterval(timer);
+      } else if (currentTime.minutes === 59 && currentTime.seconds === 59) {
+        //increment hours if applicable
+        currentTime.hours++;
+        currentTime.minutes = 0;
+        currentTime.seconds = 0;
+      } else if (currentTime.seconds === 59) {
+        //increment minutes if applicable
+        currentTime.minutes++;
+        currentTime.seconds = 0;
+      } else {
+        //increment seconds
+        currentTime.seconds++;
+      }
+
+      //build time string
+      newHours = currentTime.hours <= 9 ? "0" + currentTime.hours : currentTime.hours;
+      newMins = currentTime.minutes <= 9 ? "0" + currentTime.minutes : currentTime.minutes;
+      newSecs = currentTime.seconds <= 9 ? "0" + currentTime.seconds : currentTime.seconds;
+
+      //update display
+      timerDisplay.text([newHours, ":", newMins, ":", newSecs].join(""));
+    }
+
+    //make pieces draggable
+    pieces.draggable({
+      containment: "parent",
+      grid: [pieceW, pieceH],
+      start: function (e, ui) {
+
+        var current = getPosition(ui.helper);
+
+        //set axis depending on location relative to empty space
+        if (current.left === empty.left) {
+          ui.helper.draggable("option", "axis", "y");
+        } else if (current.top === empty.top) {
+          ui.helper.draggable("option", "axis", "x");
+        } else {
+          ui.helper.trigger("mouseup");
+          return false;
+        }
+
+        //prevent drag if not adjacent to empty space
+        if (current.bottom < empty.top || current.top > empty.bottom || current.left > empty.right || current.right < empty.left) {
+          ui.helper.trigger("mouseup");
+          return false;
+        }
+
+        //remember current location
+        previous.top = current.top;
+        previous.left = current.left;
+
+      },
+      drag: function (e, ui) {
+
+        var current = getPosition(ui.helper);
+
+        //stop dragging if we are in the empty space
+        if (current.top === empty.top && current.left === empty.left) {
+          ui.helper.trigger("mouseup");
+          return false;
+        }
+
+        //stop dragging if moving away from empty space
+        if (current.top > empty.bottom || current.bottom < empty.top || current.left > empty.right || current.right < empty.left) {
+          ui.helper.trigger("mouseup").css({
+            top: previous.top,
+            left: previous.left });
+
+          return false;
+        }
+      },
+      stop: function (e, ui) {
+        var current = getPosition(ui.helper),
+        correctPieces = 0;
+
+        //move empty space if space now occupied
+        if (current.top === empty.top && current.left === empty.left) {
+          empty.top = previous.top;
+          empty.left = previous.left;
+          empty.bottom = previous.top + pieceH;
+          empty.right = previous.left + pieceW;
+        }
+
+        //get positions of all pieces
+        $.each(positions, function (i) {
+
+          var currentPiece = $("#" + (i + 1)),
+          currentPosition = getPosition(currentPiece);
+
+          //is the current piece in the correct place?
+          if (positions[i].top === currentPosition.top && positions[i].left === currentPosition.left) {
+            correctPieces++;
+          }
+        });
+
+        //end game
+        if (correctPieces === positions.length) {
+
+          //stop timer
+          clearInterval(timer);
+
+          //display message
+          $("<p/>", {
+            text: "Congratulations, You solved the puzzle!" }).
+          appendTo("#ui");
+
+          //convert time to seconds
+          var totalSeconds = currentTime.hours * 60 * 60 + currentTime.minutes * 60 + currentTime.seconds;
+
+          //is there a saved best time?
+          if (localStorage.getItem("puzzlebesttime")) {
+            var bestTime = localStorage.getItem("puzzlebesttime");
+
+            if (totalSeconds < bestTime) {
+              //save new best time
+              localStorage.setItem("puzzlebesttime", totalSeconds);
+
+              $("<p/>", {
+                text: "Your current best time record!" }).
+              appendTo("#ui");
+            }
+          } else {
+            //save current time
+            localStorage.setItem("puzzlebesttime", totalSeconds);
+
+            //display another message
+            $("<p/>", {
+              text: "You got a new best time!" }).
+            appendTo("#ui");
+          }
+        }
+      } });
+
+
+    //helper to generate location
+    function getPosition(el) {
+      return {
+        top: parseInt(el.css("top")),
+        bottom: parseInt(el.css("top")) + pieceH,
+        left: parseInt(el.css("left")),
+        right: parseInt(el.css("left")) + pieceW };
+
+    }
+  });
+});
+//# sourceURL=pen.js
+    </script>
+
+  
+
+</body>
+
+</html>
+ 
